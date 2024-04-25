@@ -1,0 +1,143 @@
+1. FCFS
+  
+#include <stdio.h>
+
+#define MAX_PROCESSES 100
+
+int main() {
+    int n, burst_time[MAX_PROCESSES], wt[MAX_PROCESSES], tat[MAX_PROCESSES];
+    float total_wt = 0, total_tat = 0;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    printf("Enter the burst times of the processes:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &burst_time[i]);
+    }
+
+    wt[0] = 0;
+    for (int i = 1; i < n; i++)
+        wt[i] = burst_time[i - 1] + wt[i - 1];
+
+    for (int i = 0; i < n; i++)
+        tat[i] = burst_time[i] + wt[i];
+
+    printf("Processes Burst time Waiting time Turn around time\n");
+    for (int i = 0; i < n; i++) {
+        printf(" %d %d %d %d\n", i + 1, burst_time[i], wt[i], tat[i]);
+        total_wt += wt[i];
+        total_tat += tat[i];
+    }
+
+    float avg_wt = total_wt / n;
+    float avg_tat = total_tat / n;
+
+    printf("\nAverage waiting time = %.2f\n", avg_wt);
+    printf("Average turn around time = %.2f\n", avg_tat);
+
+    return 0;
+}
+
+2.Priority Based CPU scheduling
+  
+#include <stdio.h>
+
+#define MAX_PROCESS 10
+
+struct Process {
+    int pid;
+    int burst_time;
+    int priority;
+};
+
+int main() {
+    struct Process processes[MAX_PROCESS];
+    int n;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter the burst time and priority for process %d: ", i + 1);
+        scanf("%d %d", &processes[i].burst_time, &processes[i].priority);
+        processes[i].pid = i + 1;
+    }
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (processes[j].priority > processes[j + 1].priority) {
+                struct Process temp = processes[j];
+                processes[j] = processes[j + 1];
+                processes[j + 1] = temp;
+            }
+        }
+    }
+
+    int totalTime = 0;
+    for (int i = 0; i < n; i++) {
+        printf("Executing process %d\n", processes[i].pid);
+        totalTime += processes[i].burst_time;
+        printf("Process %d completed at time %d\n", processes[i].pid, totalTime);
+    }
+
+    return 0;
+}
+
+3.Round Robin
+
+#include <stdio.h>
+
+int main() {
+    int n, i, qt, count = 0, sq = 0;
+    int bt[10], wt[10], tat[10], rem_bt[10];
+    float awt = 0, atat = 0;
+
+    printf("Enter Number Of Processes: ");
+    scanf("%d", &n);
+
+    printf("Enter Burst Time of Processes:\n");
+    for (i = 0; i < n; i++) {
+        printf("Process %d: ", i + 1);
+        scanf("%d", &bt[i]);
+        rem_bt[i] = bt[i];
+    }
+
+    printf("Enter Quantum Time: ");
+    scanf("%d", &qt);
+
+    while (1) {
+        for (i = 0, count = 0; i < n; i++) {
+            int temp = qt;
+            if (rem_bt[i] == 0) {
+                count++;
+                continue;
+            }
+            if (rem_bt[i] > qt)
+                rem_bt[i] -= qt;
+            else {
+                temp = rem_bt[i];
+                rem_bt[i] = 0;
+            }
+            sq += temp;
+            tat[i] = sq;
+        }
+        if (n == count)
+            break;
+    }
+
+    printf("\nProcess\tBurst Time\tTurnaround Time\t\tWaiting Time(in ms)\n");
+    for (i = 0; i < n; i++) {
+        wt[i] = tat[i] - bt[i];
+        awt += wt[i];
+        atat += tat[i];
+        printf("%d\t%d\t\t%d\t\t%d\n", i + 1, bt[i], tat[i], wt[i]);
+    }
+
+    awt = awt / n;
+    atat = atat / n;
+    printf("Average Waiting Time: %.2f\n", awt);
+    printf("Average Turnaround Time: %.2f\n", atat);
+
+    return 0;
+}  
