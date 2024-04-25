@@ -186,3 +186,59 @@ int main() {
 
     return 0;
 }
+5. SRTF
+
+#include<stdio.h>
+
+int main() {
+    int n, i, time = 0, count = 0;
+    double avg_waiting = 0, avg_turnaround = 0;
+
+    printf("Enter the number of Processes: ");
+    scanf("%d", &n);
+    
+    int arrival[n], burst[n], remaining[n], completion[n], waiting[n], turnaround[n];
+
+    for (i = 0; i < n; i++) {
+        printf("Enter arrival time of process %d: ", i + 1);
+        scanf("%d", &arrival[i]);
+        printf("Enter burst time of process %d: ", i + 1);
+        scanf("%d", &burst[i]);
+        remaining[i] = burst[i];
+    }
+
+    while (count != n) {
+        int smallest = -1;
+        for (i = 0; i < n; i++) {
+            if (remaining[i] > 0 && (smallest == -1 || remaining[i] < remaining[smallest]) && arrival[i] <= time) {
+                smallest = i;
+            }
+        }
+
+        if (smallest == -1) {
+            time++;
+            continue;
+        }
+
+        remaining[smallest]--;
+        if (remaining[smallest] == 0) {
+            count++;
+            completion[smallest] = time + 1;
+            waiting[smallest] = completion[smallest] - arrival[smallest] - burst[smallest];
+            turnaround[smallest] = completion[smallest] - arrival[smallest];
+            avg_waiting += waiting[smallest];
+            avg_turnaround += turnaround[smallest];
+        }
+        time++;
+    }
+
+    printf("pid\tburst\tarrival\t\twaiting\t\tturnaround\tcompletion\n");
+    for (i = 0; i < n; i++) {
+        printf("%d\t%d\t%d\t\t%d\t\t%d\t\t%d\n", i + 1, burst[i], arrival[i], waiting[i], turnaround[i], completion[i]);
+    }
+
+    printf("\nAverage waiting time = %.2lf\n", avg_waiting / n);
+    printf("Average Turnaround time = %.2lf\n", avg_turnaround / n);
+
+    return 0;
+}
