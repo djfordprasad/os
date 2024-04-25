@@ -1,0 +1,207 @@
+// Program 1: Displaying parent and child process IDs
+#include<stdio.h> 
+#include<unistd.h> 
+
+int main() 
+{ 
+    printf("\n Parent Process ID %d", getppid()); 
+    printf("\n Child Process ID %d\n", getpid()); 
+    return 0;
+}
+
+// Program 2: Process creation using fork
+#include<stdio.h> 
+
+int main() 
+{ 
+    printf("Before FORK \n"); 
+    fork(); 
+    printf("After FORK \n\n"); 
+    return 0;
+}
+
+// Program 3: Process creation with fork
+#include<stdio.h> 
+#include<unistd.h>
+
+int main() 
+{ 
+    int pid; 
+    pid = fork(); 
+    if (pid > 0) 
+    { 
+        printf("From Parent \n"); 
+        printf("Parent process id %d\n", getpid()); 
+    } 
+    else 
+    { 
+        printf("From Child \n"); 
+        printf("Child process id %d\n", getpid()); 
+    } 
+    return 0;
+}
+
+// Program 4: Making child as orphan
+#include<stdio.h> 
+#include<unistd.h> 
+
+int main() 
+{ 
+    int pid, pid1; 
+    pid = fork(); 
+    if (pid > 0) 
+    { 
+        printf("From parent process\n"); 
+        printf("Parent process %d \n", getpid()); 
+    } 
+    else 
+    { 
+        sleep(1); 
+        printf("From child process\n"); 
+        printf("child process %d \n", getpid()); 
+    } 
+    return 0;
+}
+
+// Program 5: Parent waits till completion of child
+#include<stdio.h> 
+#include<sys/wait.h> 
+
+int main() 
+{ 
+    int pid; 
+    pid = fork(); 
+    printf("%d\n", pid); 
+    if (pid == 0) 
+    { 
+        printf("From child process \n"); 
+    } 
+    else 
+    { 
+        wait(0); 
+        printf("From parent process\n"); 
+    } 
+    return 0;
+}
+
+// Program 6: Using exit system call
+#include<stdio.h> 
+#include<unistd.h> 
+#include<stdlib.h> 
+
+int main() 
+{ 
+    int pid; 
+    pid = fork(); 
+    printf("%d\n", pid); 
+    if (pid < 0) 
+    { 
+        perror("Child can't be executed\n"); 
+        exit(-1); 
+    } 
+    else 
+    { 
+        printf("Child created\n"); 
+        exit(0); 
+    } 
+}
+
+// Program 7: Using fork and exec system call
+#include<stdio.h> 
+#include<unistd.h> 
+
+int main() 
+{ 
+    int pid; 
+    pid = fork(); 
+    printf("%d\n", pid); 
+    if (pid == 0) 
+    { 
+        execl("/bin/date", NULL, NULL); 
+        exit(0); 
+    } 
+    else 
+    { 
+        printf("Parent process %d\n", pid); 
+    } 
+    return 0;
+}
+
+// Program 8: To list files in specified directory
+#include<stdio.h> 
+#include<dirent.h> 
+
+int main() 
+{ 
+    char d[10]; 
+    DIR *p; 
+    struct dirent *d1; 
+    printf("ENTER A DIRECTORY NAME: "); 
+    scanf("%s", d); 
+    p = opendir(d); 
+    if (p == NULL) 
+    { 
+        perror("Can't find directory"); 
+        exit(-1); 
+    } 
+    while (d1 = readdir(p)) 
+    { 
+        printf("%s\n", d1->d_name); 
+    } 
+    return 0; 
+}
+
+// Program 9: To list files in current directories & sub-directories
+#include<stdio.h> 
+#include<dirent.h> 
+
+int main() 
+{ 
+    DIR *p, *sp; 
+    struct dirent *d, *dd; 
+    p = opendir("."); 
+    while (d = readdir(p)) 
+    { 
+        printf("%s \n", d->d_name); 
+        if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, "..")) 
+            continue; 
+        sp = opendir(d->d_name); 
+        printf("--> %s\n", dd->d_name); 
+    } 
+    return 0; 
+}
+
+// Program 10: Create process & display pid of parent & child
+#include<stdio.h> 
+#include<dirent.h> 
+
+int main(int argc, char **argv) 
+{ 
+    int pid, i; 
+    for (i = 0; i < atoi(argv[1]); i++) 
+    { 
+        pid = fork(); 
+        if (pid == 0) 
+        { 
+            printf("child process id %d    Parent process id %d\n", getpid(), getppid()); 
+        } 
+    } 
+    return 0;
+}
+
+// Program 11: Program to rename a directory
+#include<stdio.h> 
+
+int main() 
+{ 
+    char s[10], d[10]; 
+    printf("Enter source Dir Name:\n"); 
+    scanf("%s", s); 
+    printf("Enter New Dir Name:\n"); 
+    scanf("%s", d); 
+    if (rename(s, d) == -1) 
+        perror("Can't be changed\n"); 
+    else 
+        printf("%s is changed to %s\n\n", s, d); 
+    return 0;
+}
